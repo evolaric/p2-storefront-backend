@@ -1,0 +1,16 @@
+{
+  "dev": {
+    "driver": "pg",
+    "host": { "ENV": "POSTGRES_HOST_DEV" },
+    "database": { "ENV": "POSTGRES_DB_DEV" },
+    "user": { "ENV": "POSTGRES_USER_DEV" },
+    "password": { "ENV": "POSTGRES_PASSWORD_DEV" }
+  },
+  "test": {
+    "driver": "pg",
+    "host": { "ENV": "POSTGRES_HOST_TEST" },
+    "database": { "ENV": "POSTGRES_DB_TEST" },
+    "user": { "ENV": "POSTGRES_USER_TEST" },
+    "password": { "ENV": "POSTGRES_PASSWORD_TEST" }
+  }
+}
