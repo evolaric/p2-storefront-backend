@@ -8,13 +8,13 @@ dotenv.config();
 
 const store = new UserStore();
 
-const authenticate = async (req: Request, res: Response, next: NextFunction): Promise<unknown> => {
+const authenticate = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const authenticate = await store.authenticate(req.body);
     if (authenticate) {
       const secret = process.env.TOKEN_SECRET;
       const token = jwt.sign(authenticate, secret as string);
-      return res.status(200).json(token);
+      res.status(200).send(token);
     } else {
       next(res.status(401).json({ message: 'LOGIN FAILED' }));
     }
@@ -28,16 +28,29 @@ const create = async (req: Request, res: Response, next: NextFunction): Promise<
     const newUser = await store.create(req.body);
     const secret = process.env.TOKEN_SECRET;
     const token = jwt.sign(newUser, secret as string);
-    res.send(token);
+    res.status(201).send(token);
   } catch (err) {
     next(err);
   }
 };
 
-const secretAwesomeRoute = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+const show = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    //const secret = process.env.TOKEN_SECRET;
-    res.send(req.headers.authorization);
+    const user = await store.show(req.body);
+    if (!user)
+      throw new Error(
+        'You must provide a valid user Id (number) or valid user_name (string) to retrieve a user record'
+      );
+    res.json(user);
+  } catch (err) {
+    next(err);
+  }
+};
+
+const index = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const userIndex = await store.index();
+    res.json(userIndex);
   } catch (err) {
     next(err);
   }
@@ -46,7 +59,8 @@ const secretAwesomeRoute = async (req: Request, res: Response, next: NextFunctio
 const users_index = (app: express.Application): void => {
   app.post('/users/login', authenticate);
   app.post('/users', create);
-  app.get('/test', verifyjwt, secretAwesomeRoute);
+  app.get('/users/show/', verifyjwt, show);
+  app.get('/users/index/', verifyjwt, index);
 };
 
 export default users_index;

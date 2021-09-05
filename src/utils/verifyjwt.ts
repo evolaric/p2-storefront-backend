@@ -4,18 +4,27 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const verifyjwt = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+async function verifyjwt(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     if (req.headers.authorization) {
       const authorizationHeader = req.headers.authorization;
       const token = authorizationHeader.split(' ')[1];
-      const decoded = jwt.verify(token, process.env.TOKEN_SECRET as string);
-      console.log(decoded);
-      next();
+      const decoded = jwt.verify(token, process.env.TOKEN_SECRET as string, (err, decoded) => {
+        if (err) throw new Error();
+        return decoded;
+      });
+      // attach token details to res.locals
+      res.locals.user = decoded;
+    } else {
+      // the header does not exist
+      // in a real world setting, I would imagine this would redirect to a sign up screen
+      res.status(401).send('Authorization Failed: No authorization token found');
     }
-  } catch (error) {
-    res.status(401);
+    next();
+  } catch (err) {
+    // in a real world setting, I imagine this would redirect to a login screen
+    res.status(401).send('Authorization Failed: JWT could not be verified.  Reauthentication required.');
   }
-};
+}
 
 export default verifyjwt;

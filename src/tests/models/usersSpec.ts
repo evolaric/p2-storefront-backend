@@ -4,6 +4,14 @@ import { User, UserStore } from '../../models/users';
 const store = new UserStore();
 
 describe('User model testing', (): void => {
+  afterAll(async () => {
+    const conn = await Client.connect();
+    const sql = 'TRUNCATE users RESTART IDENTITY CASCADE';
+    await conn.query(sql);
+    conn.release();
+    return;
+  });
+
   describe('Check if methods are defined', (): void => {
     it('should have a create method', (): void => {
       expect(store.create).toBeDefined;
@@ -31,7 +39,7 @@ describe('User model testing', (): void => {
         password: 'iamsosleepy'
       };
       const result = await store.create(user);
-      expect(Object.keys(result).length).toEqual(5);
+      expect(Object.keys(result).length).toEqual(6);
       expect(result.id).toEqual(1);
       expect(result.user_name).toEqual('HexMaster1776');
       expect(result.first_name).toEqual('Bob');
@@ -76,7 +84,7 @@ describe('User model testing', (): void => {
         last_name: 'Fossburrey',
         password: 'passwordAlpha'
       };
-      store.create(user);
+      await store.create(user);
       const conn = await Client.connect();
       const sql = 'UPDATE users SET admin = true WHERE id=(2)';
       await conn.query(sql);
@@ -90,6 +98,7 @@ describe('User model testing', (): void => {
       };
       const result = await store.authenticate(login);
       if (result) {
+        expect(Object.keys(result).length).toEqual(6);
         expect(result.id).toEqual(1);
         expect(result.user_name).toEqual('HexMaster1776');
         expect(result.first_name).toEqual('Bob');
@@ -117,6 +126,7 @@ describe('User model testing', (): void => {
       };
       const result = await store.authenticate(login);
       if (result) {
+        expect(Object.keys(result).length).toEqual(7);
         expect(result.id).toEqual(2);
         expect(result.user_name).toEqual('AuthorityFigure');
         expect(result.first_name).toEqual('Jean');
