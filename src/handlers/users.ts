@@ -2,6 +2,7 @@ import express, { Request, Response, NextFunction } from 'express';
 import { UserStore } from '../models/users';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
+import verifyjwt from '../utils/verifyjwt';
 
 dotenv.config();
 
@@ -33,9 +34,19 @@ const create = async (req: Request, res: Response, next: NextFunction): Promise<
   }
 };
 
+const secretAwesomeRoute = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    //const secret = process.env.TOKEN_SECRET;
+    res.send(req.headers.authorization);
+  } catch (err) {
+    next(err);
+  }
+};
+
 const users_index = (app: express.Application): void => {
   app.post('/users/login', authenticate);
   app.post('/users', create);
+  app.get('/test', verifyjwt, secretAwesomeRoute);
 };
 
 export default users_index;

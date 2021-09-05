@@ -55,7 +55,7 @@ export class UserStore {
   #iat: number = new Date().getTime();
   #exp: number = new Date().getTime() + 2592000000;
 
-  async authenticate(l: LoginDetails): Promise<Token | null | Error> {
+  async authenticate(l: LoginDetails): Promise<Token | null> {
     try {
       const conn = await Client.connect();
       const sql = 'SELECT * FROM users WHERE user_name=($1)';
