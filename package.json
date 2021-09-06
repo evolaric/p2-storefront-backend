@@ -9,7 +9,7 @@
     "clearTestDB": "set ENV=test&&db-migrate reset -e test",
     "clearDevDB": "set ENV=dev&&db-migrate reset -e dev",
     "lint": "eslint . --ext .ts --fix",
-    "build": "npx tsc"
+    "build": "npm run lint && npx tsc"
   },
   "author": "Moschops",
   "license": "ISC",

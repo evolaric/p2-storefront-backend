@@ -37,10 +37,10 @@ export type LookupArrayId = [string, number];
 
 export type LookupArrayUserName = [string, string];
 
-class UserModelError extends Error {
+class UsersModelError extends Error {
   constructor(message: string, stack?: string) {
     super();
-    Error.captureStackTrace(this, UserModelError);
+    Error.captureStackTrace(this, UsersModelError);
     this.name = this.constructor.name;
     this.message = message || 'Something went wrong in the user model.';
     this.stack = stack || undefined;
@@ -92,7 +92,7 @@ export class UserStore {
         return null;
       }
     } catch (err) {
-      throw new UserModelError(err.message, err.stack);
+      throw new UsersModelError(err.message, err.stack);
     }
   }
 
@@ -104,7 +104,7 @@ export class UserStore {
       conn.release();
       return result.rows;
     } catch (err) {
-      throw new UserModelError(err.message, err.stack);
+      throw new UsersModelError(err.message, err.stack);
     }
   }
 
@@ -128,9 +128,9 @@ export class UserStore {
       return token;
     } catch (err) {
       if (err.code !== 'undefined') {
-        throw new UserModelError(err.code, err.message);
+        throw new UsersModelError(err.code, err.message);
       }
-      throw new UserModelError(err.message, err.stack || undefined);
+      throw new UsersModelError(err.message, err.stack || undefined);
     }
   }
 
@@ -154,7 +154,7 @@ export class UserStore {
       conn.release();
       return result.rows[0];
     } catch (err) {
-      throw new UserModelError(err.message, err.stack);
+      throw new UsersModelError(err.message, err.stack);
     }
   }
 }

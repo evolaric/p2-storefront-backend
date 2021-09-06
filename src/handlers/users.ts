@@ -16,7 +16,7 @@ const authenticate = async (req: Request, res: Response, next: NextFunction): Pr
       const token = jwt.sign(authenticate, secret as string);
       res.status(200).send(token);
     } else {
-      res.status(401).send('Authentication Failed: Invalid user_name or password');
+      res.status(403).send('Authentication Failed: Invalid user_name or password');
     }
   } catch (err) {
     next(err);

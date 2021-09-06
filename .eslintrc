@@ -2,7 +2,7 @@
   "extends": ["plugin:@typescript-eslint/recommended", "prettier", "plugin:prettier/recommended"],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "ecmaVersion": 2020,
+    "ecmaVersion": 2016,
     "sourceType": "module"
   },
   "ignorePatterns": ["dist/"],

@@ -8,7 +8,7 @@ const request = supertest(app);
 describe('User Enpoint Testing', (): void => {
   let token: string;
 
-  beforeAll(async () => {
+  beforeAll(async (): Promise<void> => {
     const user: User = {
       user_name: 'AuthorityFigure',
       first_name: 'Jean',
@@ -59,15 +59,15 @@ describe('User Enpoint Testing', (): void => {
     }
   });
 
-  it('GET request to /user/show route should return 403 when attempting to access without a token', async (): Promise<void> => {
+  it('GET request to /users/show route should return 401 when attempting to access without a token', async (): Promise<void> => {
     try {
-      await request.get('/users/show').send({ id: 1 }).expect(403);
+      await request.get('/users/show').send({ id: 1 }).expect(401);
     } catch (err) {
       throw new Error(err);
     }
   });
 
-  it('GET request to /user/show route should return a user by Id when provided with a token', async (): Promise<void> => {
+  it('GET request to /users/show route should return a user by Id when provided with a token', async (): Promise<void> => {
     try {
       await request
         .get('/users/show')
@@ -79,26 +79,29 @@ describe('User Enpoint Testing', (): void => {
     }
   });
 
-  it('GET request to /user/index route should return 403 when attempting to access without a token', async (): Promise<void> => {
+  it('GET request to /users/index route should return 401 when attempting to access without a token', async (): Promise<void> => {
     try {
-      await request.get('/users/show').send({ id: 1 }).expect(403);
+      await request.get('/users/show').send({ id: 1 }).expect(401);
     } catch (err) {
       throw new Error(err);
     }
   });
 
-  it('GET request to /user/index route should return a list of users if provided with a token', async (): Promise<void> => {
+  it('GET request to /users/index route should return a list of users if provided with a token', async (): Promise<void> => {
     try {
       await request
         .get('/users/index')
         .set('Authorization', 'Bearer ' + token)
-        .expect(200);
+        .expect(200)
+        .then((res) => {
+          expect(res.body.length).toEqual(2);
+        });
     } catch (err) {
       throw new Error(err);
     }
   });
 
-  it('POST request to /user/login route should return as token when provided valid user_name and password', async (): Promise<void> => {
+  it('POST request to /users/login route should return as token when provided valid user_name and password', async (): Promise<void> => {
     const user = {
       user_name: 'TestUser',
       password: 'passwordBeta'
@@ -116,13 +119,13 @@ describe('User Enpoint Testing', (): void => {
     }
   });
 
-  it('POST request to /user/login route should return 401 when provided with invalid user_name or password', async (): Promise<void> => {
+  it('POST request to /users/login route should return 403 when provided with invalid user_name or password', async (): Promise<void> => {
     const user = {
       user_name: 'TestUser',
       password: 'passwordBeta22'
     };
     try {
-      await request.post('/users/login').send(user).expect(401);
+      await request.post('/users/login').send(user).expect(403);
     } catch (err) {
       throw new Error(err);
     }

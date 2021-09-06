@@ -11,13 +11,3 @@ CREATE TABLE IF NOT EXISTS products (
     category INT DEFAULT 1 NOT NULL,
     FOREIGN KEY (category) REFERENCES categories(id)
 );
-
-INSERT INTO
-    categories (category)
-VALUES
-    ('General Products'),
-    (' Category 1 '),
-    (' Category 2 '),
-    (' Category 3 '),
-    (' Category 4 '),
-    (' Category 5 ');
