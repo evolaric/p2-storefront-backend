@@ -38,38 +38,20 @@ export type LookupArrayId = [string, number];
 export type LookupArrayUserName = [string, string];
 
 class UserModelError extends Error {
-  constructor(message: string, stack: string) {
+  constructor(message: string, stack?: string) {
     super();
     Error.captureStackTrace(this, UserModelError);
     this.name = this.constructor.name;
     this.message = message || 'Something went wrong in the user model.';
-    this.stack = stack;
+    this.stack = stack || undefined;
   }
 }
 
 export class UserStore {
   #pepper = process.env.BCRYPT_PASSWORD;
-
   #saltRounds: number = parseInt(process.env.SALT_ROUNDS as string);
-
   #iat: number = new Date().getTime();
   #exp: number = new Date().getTime() + 2592000000;
-
-  async checkUniqueName(name: string): Promise<boolean> {
-    try {
-      const conn = await Client.connect();
-      const sql = 'SELECT * FROM users WHERE user_name=($1)';
-      const result = await conn.query(sql, [name]);
-      conn.release();
-      if (result.rows.length > 0) {
-        return false; // not a unique user name
-      } else {
-        return true;
-      }
-    } catch (err) {
-      throw new UserModelError(err.message, err.stack);
-    }
-  }
 
   async authenticate(l: LoginDetails): Promise<Token | null> {
     try {
@@ -77,13 +59,10 @@ export class UserStore {
       const sql = 'SELECT * FROM users WHERE user_name=($1)';
       const result = await conn.query(sql, [l.user_name]);
       conn.release();
-
       if (!result.rows.length) {
         return null;
       }
-
       const user = result.rows[0];
-
       if (user.admin) {
         if (bcrypt.compareSync(l.password + this.#pepper + l.user_name, user.password_digest)) {
           const adminToken: Token = {
@@ -130,37 +109,28 @@ export class UserStore {
   }
 
   async create(u: User): Promise<Token> {
-    const nameCheck = await this.checkUniqueName(u.user_name);
-    if (!nameCheck) {
-      throw new UserModelError('Provided user_name was not unique', '');
-    }
     try {
       const conn = await Client.connect();
       const sql =
         'INSERT INTO users (user_name, first_name, last_name, password_digest) VALUES ($1, $2, $3, $4) RETURNING *';
 
       const hash = bcrypt.hashSync(u.password + this.#pepper + u.user_name, this.#saltRounds);
-      const token: Token = await conn
-        .query(sql, [u.user_name, u.first_name, u.last_name, hash])
-        .then((result) => {
-          conn.release();
-          const token: Token = {
-            id: result.rows[0].id,
-            user_name: result.rows[0].user_name,
-            first_name: result.rows[0].first_name,
-            last_name: result.rows[0].last_name,
-            iat: this.#iat,
-            exp: this.#exp
-          };
-          return token;
-        })
-        .catch((err) => {
-          conn.release();
-          throw new UserModelError(err.message, '');
-        });
+      const result = await conn.query(sql, [u.user_name, u.first_name, u.last_name, hash]);
+      conn.release();
+      const token: Token = {
+        id: result.rows[0].id,
+        user_name: result.rows[0].user_name,
+        first_name: result.rows[0].first_name,
+        last_name: result.rows[0].last_name,
+        iat: this.#iat,
+        exp: this.#exp
+      };
       return token;
     } catch (err) {
-      throw new UserModelError(err.message, err.stack);
+      if (err.code !== 'undefined') {
+        throw new UserModelError(err.code, err.message);
+      }
+      throw new UserModelError(err.message, err.stack || undefined);
     }
   }
 
@@ -184,7 +154,7 @@ export class UserStore {
       conn.release();
       return result.rows[0];
     } catch (err) {
-      throw new UserModelError(err.name, err.stack);
+      throw new UserModelError(err.message, err.stack);
     }
   }
 }

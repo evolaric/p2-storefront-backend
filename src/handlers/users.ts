@@ -16,7 +16,7 @@ const authenticate = async (req: Request, res: Response, next: NextFunction): Pr
       const token = jwt.sign(authenticate, secret as string);
       res.status(200).send(token);
     } else {
-      next(res.status(401).json({ message: 'LOGIN FAILED' }));
+      res.status(401).send('Authentication Failed: Invalid user_name or password');
     }
   } catch (err) {
     next(err);
@@ -37,11 +37,13 @@ const create = async (req: Request, res: Response, next: NextFunction): Promise<
 const show = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const user = await store.show(req.body);
-    if (!user)
+    if (!user) {
       throw new Error(
         'You must provide a valid user Id (number) or valid user_name (string) to retrieve a user record'
       );
-    res.json(user);
+    } else {
+      res.json(user);
+    }
   } catch (err) {
     next(err);
   }

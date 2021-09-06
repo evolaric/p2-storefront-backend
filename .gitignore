@@ -22,3 +22,4 @@ workspace.code-workspace
 src/sqlscratch.sql
 routes_example.ts
 docker-command.txt
+.vscode/settings.json

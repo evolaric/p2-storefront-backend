@@ -23,17 +23,20 @@ describe('User Enpoint Testing', (): void => {
         .then((res) => {
           token = res.text;
         });
-      console.log(token);
     } catch (err) {
-      throw new Error();
+      throw new Error(err);
     }
   });
 
   afterAll(async (): Promise<void> => {
-    const conn = await Client.connect();
-    const sql = 'TRUNCATE users RESTART IDENTITY CASCADE';
-    await conn.query(sql);
-    conn.release();
+    try {
+      const conn = await Client.connect();
+      const sql = 'TRUNCATE users RESTART IDENTITY CASCADE';
+      await conn.query(sql);
+      conn.release();
+    } catch (err) {
+      throw new Error(err);
+    }
   });
 
   it('POST request to /users with proper data should create a new user and return a token', async (): Promise<void> => {
@@ -52,30 +55,76 @@ describe('User Enpoint Testing', (): void => {
           expect(res.statusCode).toEqual(201);
         });
     } catch (err) {
-      console.log(err);
-      throw new Error();
+      throw new Error(err);
     }
   });
 
-  it('POST request to /users with improper data should', async (): Promise<void> => {
-    const brokenRequest = async (): Promise<void> => {
-      try {
-        await request
-          .post('/users')
-          .send({
-            user_name: 'TestUser',
-            password: 'passwordBeta'
-          })
-          .then((res) => {
-            expect(res.statusCode).toEqual(500);
-          });
-      } catch (err) {
-        console.log(err);
-        throw new Error();
-      }
+  it('GET request to /user/show route should return 403 when attempting to access without a token', async (): Promise<void> => {
+    try {
+      await request.get('/users/show').send({ id: 1 }).expect(403);
+    } catch (err) {
+      throw new Error(err);
+    }
+  });
+
+  it('GET request to /user/show route should return a user by Id when provided with a token', async (): Promise<void> => {
+    try {
+      await request
+        .get('/users/show')
+        .set('Authorization', 'Bearer ' + token)
+        .send({ id: 1 })
+        .expect(200);
+    } catch (err) {
+      throw new Error(err);
+    }
+  });
+
+  it('GET request to /user/index route should return 403 when attempting to access without a token', async (): Promise<void> => {
+    try {
+      await request.get('/users/show').send({ id: 1 }).expect(403);
+    } catch (err) {
+      throw new Error(err);
+    }
+  });
+
+  it('GET request to /user/index route should return a list of users if provided with a token', async (): Promise<void> => {
+    try {
+      await request
+        .get('/users/index')
+        .set('Authorization', 'Bearer ' + token)
+        .expect(200);
+    } catch (err) {
+      throw new Error(err);
+    }
+  });
+
+  it('POST request to /user/login route should return as token when provided valid user_name and password', async (): Promise<void> => {
+    const user = {
+      user_name: 'TestUser',
+      password: 'passwordBeta'
     };
-    await expectAsync(brokenRequest()).toBeRejectedWith(
-      new Error(`Could not find a status for order# 2133. Error: TypeError: Cannot read property 'status' of undefined`)
-    );
+    try {
+      await request
+        .post('/users/login')
+        .send(user)
+        .expect(200)
+        .then((res) => {
+          expect(res.text).toBeDefined;
+        });
+    } catch (err) {
+      throw new Error(err);
+    }
+  });
+
+  it('POST request to /user/login route should return 401 when provided with invalid user_name or password', async (): Promise<void> => {
+    const user = {
+      user_name: 'TestUser',
+      password: 'passwordBeta22'
+    };
+    try {
+      await request.post('/users/login').send(user).expect(401);
+    } catch (err) {
+      throw new Error(err);
+    }
   });
 });
