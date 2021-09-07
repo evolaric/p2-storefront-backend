@@ -22,8 +22,6 @@ class OrdersModelError extends Error {
 
 export class OrdersStore {
   detailsStore = new OrderDetailsStore();
-  //create
-  //this will not be accessed by the routes
   async createOrder(user_id: number): Promise<Order> {
     try {
       const conn = await Client.connect();
@@ -134,6 +132,4 @@ export class OrdersStore {
       throw new OrdersModelError(err.message, err.stack || null);
     }
   }
-  //modify
-  //get closed order
 }

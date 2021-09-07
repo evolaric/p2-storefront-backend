@@ -28,6 +28,7 @@ describe('Products Model Testing', (): void => {
       throw new Error(err);
     }
   });
+
   describe('Check if methods are defined', (): void => {
     it('should have an index method', (): void => {
       expect(store.index).toBeDefined;
@@ -49,31 +50,39 @@ describe('Products Model Testing', (): void => {
     });
 
     it('show method should return a Product by id', async (): Promise<void> => {
-      const result = await store.show(1);
-      expect(result).toEqual({
-        id: 1,
-        product_name: 'Item 1',
-        price: '28.99',
-        info: 'Some descriptive text',
-        category: 1
-      });
+      try {
+        const result = await store.show(1);
+        expect(result).toEqual({
+          id: 1,
+          product_name: 'Item 1',
+          price: '28.99',
+          info: 'Some descriptive text',
+          category: 1
+        });
+      } catch (err) {
+        throw new Error(err);
+      }
     });
 
     it('should return a new Product object upon insertion of a new record', async (): Promise<void> => {
-      const newProduct = {
-        product_name: 'Item 22',
-        price: 428.99,
-        info: 'Some descriptive text',
-        category: 3
-      };
-      const result = await store.create(newProduct);
-      expect(result).toEqual({
-        id: 22,
-        product_name: 'Item 22',
-        price: '428.99',
-        info: 'Some descriptive text',
-        category: 3
-      });
+      try {
+        const newProduct = {
+          product_name: 'Item 22',
+          price: 428.99,
+          info: 'Some descriptive text',
+          category: 3
+        };
+        const result = await store.create(newProduct);
+        expect(result).toEqual({
+          id: 22,
+          product_name: 'Item 22',
+          price: '428.99',
+          info: 'Some descriptive text',
+          category: 3
+        });
+      } catch (err) {
+        throw new Error(err);
+      }
     });
   });
 });

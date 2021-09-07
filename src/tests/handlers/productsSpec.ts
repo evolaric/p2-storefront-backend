@@ -30,6 +30,7 @@ describe('Products Endpoint Testing', (): void => {
         });
       const conn = await Client.connect();
       await conn.query(seed);
+      conn.release();
     } catch (err) {
       throw new Error(err);
     }

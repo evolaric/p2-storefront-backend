@@ -19,7 +19,6 @@ class ProductsModelError extends Error {
 }
 
 export class ProductsStore {
-  //index
   async index(): Promise<Product[]> {
     try {
       const conn = await Client.connect();
@@ -31,7 +30,6 @@ export class ProductsStore {
       throw new ProductsModelError(err.message, err.stack);
     }
   }
-  //show
 
   async show(id: number): Promise<Product> {
     try {
@@ -44,7 +42,6 @@ export class ProductsStore {
       throw new ProductsModelError(err.message, err.stack);
     }
   }
-  //create
 
   async create(p: Product): Promise<Product> {
     try {

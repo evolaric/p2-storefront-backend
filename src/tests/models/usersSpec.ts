@@ -32,47 +32,63 @@ describe('User model testing', (): void => {
 
   describe('User Methods', (): void => {
     it('create method should return a Token object', async (): Promise<void> => {
-      const user: User = {
-        user_name: 'HexMaster1776',
-        first_name: 'Bob',
-        last_name: 'Dobbs',
-        password: 'iamsosleepy'
-      };
-      const result = await store.create(user);
-      expect(Object.keys(result).length).toEqual(6);
-      expect(result.id).toEqual(1);
-      expect(result.user_name).toEqual('HexMaster1776');
-      expect(result.first_name).toEqual('Bob');
-      expect(result.last_name).toEqual('Dobbs');
-      expect(result.iat).toBeDefined;
-      expect(result.exp).toBeDefined;
+      try {
+        const user: User = {
+          user_name: 'HexMaster1776',
+          first_name: 'Bob',
+          last_name: 'Dobbs',
+          password: 'iamsosleepy'
+        };
+        const result = await store.create(user);
+        expect(Object.keys(result).length).toEqual(6);
+        expect(result.id).toEqual(1);
+        expect(result.user_name).toEqual('HexMaster1776');
+        expect(result.first_name).toEqual('Bob');
+        expect(result.last_name).toEqual('Dobbs');
+        expect(result.iat).toBeDefined;
+        expect(result.exp).toBeDefined;
+      } catch (err) {
+        throw new Error(err);
+      }
     });
 
     it('show method should return a User object by Id', async (): Promise<void> => {
-      const user = {
-        id: 1
-      };
-      const result = await store.show(user);
-      expect(result.id).toEqual(1);
-      expect(result.user_name).toEqual('HexMaster1776');
-      expect(result.first_name).toEqual('Bob');
-      expect(result.last_name).toEqual('Dobbs');
+      try {
+        const user = {
+          id: 1
+        };
+        const result = await store.show(user);
+        expect(result.id).toEqual(1);
+        expect(result.user_name).toEqual('HexMaster1776');
+        expect(result.first_name).toEqual('Bob');
+        expect(result.last_name).toEqual('Dobbs');
+      } catch (err) {
+        throw new Error(err);
+      }
     });
 
     it('show method should return a User object by user_name', async (): Promise<void> => {
-      const user = {
-        user_name: 'HexMaster1776'
-      };
-      const result = await store.show(user);
-      expect(result.id).toEqual(1);
-      expect(result.user_name).toEqual('HexMaster1776');
-      expect(result.first_name).toEqual('Bob');
-      expect(result.last_name).toEqual('Dobbs');
+      try {
+        const user = {
+          user_name: 'HexMaster1776'
+        };
+        const result = await store.show(user);
+        expect(result.id).toEqual(1);
+        expect(result.user_name).toEqual('HexMaster1776');
+        expect(result.first_name).toEqual('Bob');
+        expect(result.last_name).toEqual('Dobbs');
+      } catch (err) {
+        throw new Error(err);
+      }
     });
 
     it('index method should return a list of user records', async (): Promise<void> => {
-      const result = await store.index();
-      expect(result.length).toEqual(1);
+      try {
+        const result = await store.index();
+        expect(result.length).toEqual(1);
+      } catch (err) {
+        throw new Error(err);
+      }
     });
   });
 
@@ -92,50 +108,62 @@ describe('User model testing', (): void => {
     });
 
     it('authenticate method should return a Token object on a successful login', async (): Promise<void> => {
-      const login = {
-        user_name: 'HexMaster1776',
-        password: 'iamsosleepy'
-      };
-      const result = await store.authenticate(login);
-      if (result) {
-        expect(Object.keys(result).length).toEqual(6);
-        expect(result.id).toEqual(1);
-        expect(result.user_name).toEqual('HexMaster1776');
-        expect(result.first_name).toEqual('Bob');
-        expect(result.last_name).toEqual('Dobbs');
-        expect(result.iat).toBeDefined;
-        expect(result.exp).toBeDefined;
-      } else {
-        expect(result).toBeDefined; // if not defined it fails
+      try {
+        const login = {
+          user_name: 'HexMaster1776',
+          password: 'iamsosleepy'
+        };
+        const result = await store.authenticate(login);
+        if (result) {
+          expect(Object.keys(result).length).toEqual(6);
+          expect(result.id).toEqual(1);
+          expect(result.user_name).toEqual('HexMaster1776');
+          expect(result.first_name).toEqual('Bob');
+          expect(result.last_name).toEqual('Dobbs');
+          expect(result.iat).toBeDefined;
+          expect(result.exp).toBeDefined;
+        } else {
+          expect(result).toBeDefined; // if not defined it fails
+        }
+      } catch (err) {
+        throw new Error(err);
       }
     });
 
     it('authenticate method should return null on an unsuccessful login', async (): Promise<void> => {
-      const login = {
-        user_name: 'HexMaster1776',
-        password: 'iamsosleepy22'
-      };
-      const result = await store.authenticate(login);
-      expect(result).toBeNull;
+      try {
+        const login = {
+          user_name: 'HexMaster1776',
+          password: 'iamsosleepy22'
+        };
+        const result = await store.authenticate(login);
+        expect(result).toBeNull;
+      } catch (err) {
+        throw new Error(err);
+      }
     });
 
     it('authenticate method should return an admin Token for an admin user', async (): Promise<void> => {
-      const login = {
-        user_name: 'AuthorityFigure',
-        password: 'passwordAlpha'
-      };
-      const result = await store.authenticate(login);
-      if (result) {
-        expect(Object.keys(result).length).toEqual(7);
-        expect(result.id).toEqual(2);
-        expect(result.user_name).toEqual('AuthorityFigure');
-        expect(result.first_name).toEqual('Jean');
-        expect(result.last_name).toEqual('Fossburrey');
-        expect(result.iat).toBeDefined;
-        expect(result.exp).toBeDefined;
-        expect(result.admin).toBeTrue;
-      } else {
-        expect(result).toBeDefined; // if not defined it fails
+      try {
+        const login = {
+          user_name: 'AuthorityFigure',
+          password: 'passwordAlpha'
+        };
+        const result = await store.authenticate(login);
+        if (result) {
+          expect(Object.keys(result).length).toEqual(7);
+          expect(result.id).toEqual(2);
+          expect(result.user_name).toEqual('AuthorityFigure');
+          expect(result.first_name).toEqual('Jean');
+          expect(result.last_name).toEqual('Fossburrey');
+          expect(result.iat).toBeDefined;
+          expect(result.exp).toBeDefined;
+          expect(result.admin).toBeTrue;
+        } else {
+          expect(result).toBeDefined; // if not defined it fails
+        }
+      } catch (err) {
+        throw new Error(err);
       }
     });
   });
