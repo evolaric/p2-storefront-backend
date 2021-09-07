@@ -4,8 +4,9 @@
   "description": "Project 2",
   "main": "src/server.ts",
   "scripts": {
+    "setup": "docker-compose -f \"docker-compose.yml\" up -d --build",
     "start": "nodemon src/server.ts",
-    "test": "set ENV=test&&db-migrate up -e test && jasmine-ts && npm run clearTestDB",
+    "test": "set ENV=test&&db-migrate up -e test && jasmine-ts && db-migrate reset -e test",
     "clearTestDB": "set ENV=test&&db-migrate reset -e test",
     "clearDevDB": "set ENV=dev&&db-migrate reset -e dev",
     "lint": "eslint . --ext .ts --fix",
