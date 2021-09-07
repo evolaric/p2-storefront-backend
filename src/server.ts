@@ -1,11 +1,13 @@
 import express, { Request, Response } from 'express';
 import users_index from './handlers/users';
 import products_index from './handlers/products';
-//import orders_index from './handlers/orders';
+import orders_index from './handlers/orders';
+import cors from 'cors';
 
 const port = 3000;
 const app = express();
 
+app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -15,8 +17,7 @@ app.get('/', (_req: Request, res: Response): void => {
 
 users_index(app);
 products_index(app);
-//products_index(app);
-//orders_index(app);
+orders_index(app);
 
 app.listen(port, (): void => {
   console.log(`App listening on port ${port}`);

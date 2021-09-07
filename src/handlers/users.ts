@@ -36,7 +36,8 @@ const create = async (req: Request, res: Response, next: NextFunction): Promise<
 
 const show = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const user = await store.show(req.body);
+    const nub = res.locals.user;
+    const user = await store.show({ id: nub.id });
     if (!user) {
       throw new Error(
         'You must provide a valid user Id (number) or valid user_name (string) to retrieve a user record'
@@ -61,8 +62,8 @@ const index = async (_req: Request, res: Response, next: NextFunction): Promise<
 const users_index = (app: express.Application): void => {
   app.post('/users/login', authenticate);
   app.post('/users', create);
-  app.get('/users/show/', verifyjwt, show);
-  app.get('/users/index/', verifyjwt, index);
+  app.get('/users/show', verifyjwt, show);
+  app.get('/users/index', verifyjwt, index);
 };
 
 export default users_index;

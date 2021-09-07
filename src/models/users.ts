@@ -99,7 +99,7 @@ export class UserStore {
   async index(): Promise<User[]> {
     try {
       const conn = await Client.connect();
-      const sql = 'SELECT * FROM users';
+      const sql = 'SELECT id, user_name, first_name, last_name FROM users';
       const result = await conn.query(sql);
       conn.release();
       return result.rows;
@@ -152,7 +152,9 @@ export class UserStore {
       const sql = await checkBy(u);
       const result = await conn.query(sql[0], [sql[1]]);
       conn.release();
-      return result.rows[0];
+      const user = result.rows[0];
+      user.password_digest = '**************';
+      return user;
     } catch (err) {
       throw new UsersModelError(err.message, err.stack);
     }

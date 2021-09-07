@@ -2,7 +2,7 @@ import Client from '../database';
 
 export type Detail = {
   id?: number;
-  order_id: number;
+  order_id?: number;
   product_id: number;
   quantity: number;
 };
@@ -35,20 +35,19 @@ export class OrderDetailsStore {
   }
 
   // insert details
-  async insert(d: Details): Promise<Details> {
-    const orderNumber: number = d[0].order_id;
+  async insert(order_id: number, d: Details): Promise<Details> {
     const sql = 'INSERT INTO order_details(order_id, product_id, quantity) VALUES($1,$2,$3)';
     const conn = await Client.connect();
     // Delete the existing details, if they exist...
-    await this.delete(orderNumber);
+    await this.delete(order_id);
     //...and then insert the new details
     try {
       // Oh, sweet for..await loop!  Where have you been all my life?
       for await (const row of d) {
-        await conn.query(sql, [orderNumber, row.product_id, row.quantity]);
+        await conn.query(sql, [order_id, row.product_id, row.quantity]);
       }
       conn.release();
-      const inserted = await this.get(orderNumber);
+      const inserted = await this.get(order_id);
       return inserted;
     } catch (err) {
       throw new OrderDetailsModelError(err.message, err.stack || null);

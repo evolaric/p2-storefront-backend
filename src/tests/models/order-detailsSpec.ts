@@ -46,12 +46,12 @@ describe('OrderDetails model testing', (): void => {
   describe('Order-Details methods', (): void => {
     it('insert method should return the inserted list of details as a Details array', async (): Promise<void> => {
       const details = [
-        { order_id: 1, product_id: 2, quantity: 116 },
-        { order_id: 1, product_id: 3, quantity: 2 },
-        { order_id: 1, product_id: 4, quantity: 2 },
-        { order_id: 1, product_id: 5, quantity: 2 }
+        { product_id: 2, quantity: 116 },
+        { product_id: 3, quantity: 2 },
+        { product_id: 4, quantity: 2 },
+        { product_id: 5, quantity: 2 }
       ];
-      const result = await store.insert(details);
+      const result = await store.insert(1, details);
       expect(result).toEqual([
         { id: 1, order_id: 1, product_id: 2, quantity: 116 },
         { id: 2, order_id: 1, product_id: 3, quantity: 2 },
@@ -72,12 +72,12 @@ describe('OrderDetails model testing', (): void => {
 
     it('insert method should delete existing details and replace them', async (): Promise<void> => {
       const details = [
-        { order_id: 1, product_id: 5, quantity: 116 },
-        { order_id: 1, product_id: 6, quantity: 2 },
-        { order_id: 1, product_id: 7, quantity: 2 },
-        { order_id: 1, product_id: 8, quantity: 2 }
+        { product_id: 5, quantity: 116 },
+        { product_id: 6, quantity: 2 },
+        { product_id: 7, quantity: 2 },
+        { product_id: 8, quantity: 2 }
       ];
-      const result = await store.insert(details);
+      const result = await store.insert(1, details);
       expect(result).toEqual([
         { id: 5, order_id: 1, product_id: 5, quantity: 116 },
         { id: 6, order_id: 1, product_id: 6, quantity: 2 },

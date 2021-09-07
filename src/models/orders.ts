@@ -93,11 +93,13 @@ export class OrdersStore {
         //if closed, sends the complete closed Order back unchanged
         const closedOrder = await this.composeOrder(o.id);
         return closedOrder;
-      } else if (o.details !== undefined) {
-        // if a details array was included in the request, rewrites the details in the order
-        await this.detailsStore.insert(o.details);
-      } else if (o.status && o.status !== undefined) {
-        // if the request is set to true, closes the order and sends closed Order object
+      }
+      // if a details array was included in the request, rewrites the details in the order
+      if (o.details !== undefined) {
+        await this.detailsStore.insert(o.id, o.details);
+      }
+      // if the request is set to true, closes the order and sends closed Order object
+      if (o.status === true) {
         await this.closeOrder(o.id);
       }
     } catch (err) {
